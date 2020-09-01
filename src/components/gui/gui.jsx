@@ -39,6 +39,7 @@ import addExtensionIcon from './icon--extensions.svg';
 import codeIcon from './icon--code.svg';
 import costumesIcon from './icon--costumes.svg';
 import soundsIcon from './icon--sounds.svg';
+import LoginModal from "../login-modal/login-modal.jsx";
 
 const messages = defineMessages({
     addExtension: {
@@ -118,6 +119,7 @@ const GUIComponent = props => {
         tipsLibraryVisible,
         vm,
         loginState,
+        showLoginModal,
         ...componentProps
     } = omit(props, 'dispatch');
     if (children) {
@@ -159,6 +161,10 @@ const GUIComponent = props => {
                 dir={isRtl ? 'rtl' : 'ltr'}
                 {...componentProps}
             >
+                {showLoginModal ?(
+                    <LoginModal title='登录'></LoginModal>
+                    ):null
+                }
                 {telemetryModalVisible ? (
                     <TelemetryModal
                         onCancel={onTelemetryModalCancel}
@@ -420,7 +426,8 @@ GUIComponent.propTypes = {
     targetIsStage: PropTypes.bool,
     telemetryModalVisible: PropTypes.bool,
     tipsLibraryVisible: PropTypes.bool,
-    vm: PropTypes.instanceOf(VM).isRequired
+    vm: PropTypes.instanceOf(VM).isRequired,
+    showLoginModal:PropTypes.bool
 };
 GUIComponent.defaultProps = {
     backpackHost: null,
@@ -440,7 +447,8 @@ GUIComponent.defaultProps = {
     isShared: false,
     loading: false,
     showComingSoon: false,
-    stageSizeMode: STAGE_SIZE_MODES.large
+    stageSizeMode: STAGE_SIZE_MODES.large,
+    showLoginModal:false
 };
 
 const mapStateToProps = state => ({

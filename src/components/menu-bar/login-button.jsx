@@ -5,6 +5,8 @@ import React from 'react';
 import Button from '../button/button.jsx';
 
 import styles from './login-button.css';
+import {connect} from "react-redux";
+import {openLoginModal} from "../../reducers/modals";
 
 const LoginButton = ({
                          className,
@@ -32,4 +34,20 @@ LoginButton.propTypes = {
 LoginButton.defaultProps = {
     onClick: () => {}
 };
-export default LoginButton;
+
+
+
+const mapStateToProps = state => ({
+});
+
+const mapDispatchToProps = dispatch => ({
+    onClick:()=>dispatch(openLoginModal())
+});
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(LoginButton);
+
+
+// export default LoginButton;
