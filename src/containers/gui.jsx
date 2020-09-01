@@ -38,12 +38,42 @@ import cloudManagerHOC from '../lib/cloud-manager-hoc.jsx';
 
 import GUIComponent from '../components/gui/gui.jsx';
 import {setIsScratchDesktop} from '../lib/isScratchDesktop.js';
+import {getIsLogined} from "../reducers/user-state";
 
 class GUI extends React.Component {
     componentDidMount () {
         setIsScratchDesktop(this.props.isScratchDesktop);
         this.props.onStorageInit(storage);
         this.props.onVmInit(this.props.vm);
+
+        //----------------------------
+        //ref: https://blog.csdn.net/wave_1102/article/details/104912499
+
+        const url="/static/test.sb3";
+        fetch(url,{
+            method: 'GET'
+        })
+        .then(response=>response.blob())
+        .then(blob=>{
+            const reader=new FileReader();
+            reader.onload=()=> {
+
+                this.props.vm.loadProject(reader.result)
+                    .then(() => {
+                        // GoogleAnalytics.event({
+                        //     category: 'project',
+                        //     action: 'Import Project File',
+                        //     nonInteraction: true
+                        // })
+                    })
+            }
+            reader.readAsArrayBuffer(blob)
+        })
+        .catch(error=>{
+            alert(`远程加载文件错误！${error}`)
+        })
+        //----------------------------
+
     }
     componentDidUpdate (prevProps) {
         if (this.props.projectId !== prevProps.projectId && this.props.projectId !== null) {
@@ -81,6 +111,7 @@ class GUI extends React.Component {
             loadingStateVisible,
             ...componentProps
         } = this.props;
+        console.log("----------------- projectId: ",projectId);
         return (
             <GUIComponent
                 loading={fetchingProject || isLoading || loadingStateVisible}
@@ -112,7 +143,8 @@ GUI.propTypes = {
     projectHost: PropTypes.string,
     projectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     telemetryModalVisible: PropTypes.bool,
-    vm: PropTypes.instanceOf(VM).isRequired
+    vm: PropTypes.instanceOf(VM).isRequired,
+    loginState: PropTypes.bool
 };
 
 GUI.defaultProps = {
@@ -125,6 +157,7 @@ GUI.defaultProps = {
 
 const mapStateToProps = state => {
     const loadingState = state.scratchGui.projectState.loadingState;
+    const loginState = state.scratchGui.userState.loginState;
     return {
         activeTabIndex: state.scratchGui.editorTab.activeTabIndex,
         alertsVisible: state.scratchGui.alerts.visible,
@@ -149,7 +182,8 @@ const mapStateToProps = state => {
         ),
         telemetryModalVisible: state.scratchGui.modals.telemetryModal,
         tipsLibraryVisible: state.scratchGui.modals.tipsLibrary,
-        vm: state.scratchGui.vm
+        vm: state.scratchGui.vm,
+        loginState: getIsLogined(loginState)
     };
 };
 

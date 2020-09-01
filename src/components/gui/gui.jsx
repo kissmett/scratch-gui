@@ -117,6 +117,7 @@ const GUIComponent = props => {
         telemetryModalVisible,
         tipsLibraryVisible,
         vm,
+        loginState,
         ...componentProps
     } = omit(props, 'dispatch');
     if (children) {
@@ -231,6 +232,7 @@ const GUIComponent = props => {
                     onSeeCommunity={onSeeCommunity}
                     onShare={onShare}
                     onToggleLoginOpen={onToggleLoginOpen}
+                    loginState={loginState}
                 />
                 <Box className={styles.bodyWrapper}>
                     <Box className={styles.flexWrapper}>
