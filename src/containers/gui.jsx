@@ -38,7 +38,7 @@ import cloudManagerHOC from '../lib/cloud-manager-hoc.jsx';
 
 import GUIComponent from '../components/gui/gui.jsx';
 import {setIsScratchDesktop} from '../lib/isScratchDesktop.js';
-import {getIsLogined} from "../reducers/user-state";
+import {getIsLogined} from '../reducers/user-state';
 
 class GUI extends React.Component {
     componentDidMount () {
@@ -46,33 +46,77 @@ class GUI extends React.Component {
         this.props.onStorageInit(storage);
         this.props.onVmInit(this.props.vm);
 
-        //----------------------------
-        //ref: https://blog.csdn.net/wave_1102/article/details/104912499
+        // alert('before load sb3');
 
-        const url="/static/test.sb3";
-        fetch(url,{
-            method: 'GET'
-        })
-        .then(response=>response.blob())
-        .then(blob=>{
-            const reader=new FileReader();
-            reader.onload=()=> {
+        // ----------------------------
+        let v = 'v2';
+        if (v == 'v1') {
+            // ref: https://blog.csdn.net/wave_1102/article/details/104912499
+            const url = '/static/test.sb3';
+            fetch(url, {
+                method: 'GET'
+            })
+                .then(response => response.blob())
+                .then(blob => {
+                    const reader = new FileReader();
+                    reader.onload = () => {
 
-                this.props.vm.loadProject(reader.result)
-                    .then(() => {
-                        // GoogleAnalytics.event({
-                        //     category: 'project',
-                        //     action: 'Import Project File',
-                        //     nonInteraction: true
-                        // })
-                    })
-            }
-            reader.readAsArrayBuffer(blob)
-        })
-        .catch(error=>{
-            alert(`远程加载文件错误！${error}`)
-        })
-        //----------------------------
+                        this.props.vm.loadProject(reader.result)
+                            .then(() => {
+                                // GoogleAnalytics.event({
+                                //     category: 'project',
+                                //     action: 'Import Project File',
+                                //     nonInteraction: true
+                                // })
+                            });
+                    }
+                    reader.readAsArrayBuffer(blob);
+                })
+                .catch(error => {
+                    // eslint-disable-next-line no-alert
+                    alert(`远程加载文件错误！${error}`);
+                });
+        }
+        if(v=='v2'){
+            // https://blog.csdn.net/onightfalls/article/details/106543037
+            var _this = this;
+            // 作品所在存放地址
+            var sb3Path =  '/static/test.sb3';
+
+            /**
+             * 必须使用 $(window).on("load",function(){});
+             * 否则页面在未加载完的情况下，有些组件会来不及加载，影响二次文件保存
+             */
+            console.log("尚未初始加载Sb3文件");
+            $(window).on("load",() => {
+                console.log('即将初始加载Sb3文件');
+                let reader = new FileReader();
+                let request = new XMLHttpRequest();
+                console.log("加载的资源路径", sb3Path);
+                request.open('GET', sb3Path, true);
+                request.responseType = "blob";
+                request.onload = function() {
+                    if(request.status==404){
+                        alert('未找到sb3类型的资源文件');
+                        location.href='/scratch';
+                    }
+                    let blobs = request.response
+                    reader.readAsArrayBuffer(blobs);
+                    reader.onload = () => _this.props.vm.loadProject(reader.result).then(() => {
+                        analytics.event({
+                            category: 'project',
+                            action: 'Import Project File',
+                            nonInteraction: true
+                        });
+                        _this.props.onLoadingFinished(_this.props.loadingState);
+                    }).catch(error => {
+                        console.warn(error);
+                    });
+                }
+                request.send();
+            });
+        }
+        // ----------------------------
 
     }
     componentDidUpdate (prevProps) {
@@ -111,7 +155,8 @@ class GUI extends React.Component {
             loadingStateVisible,
             ...componentProps
         } = this.props;
-        console.log("----------------- projectId: ",projectId);
+        // eslint-disable-next-line no-console
+        console.log('----------------- projectId: ',projectId);
         return (
             <GUIComponent
                 loading={fetchingProject || isLoading || loadingStateVisible}

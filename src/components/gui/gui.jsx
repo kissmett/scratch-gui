@@ -161,9 +161,9 @@ const GUIComponent = props => {
                 dir={isRtl ? 'rtl' : 'ltr'}
                 {...componentProps}
             >
-                {showLoginModal ?(
-                    <LoginModal title='登录'></LoginModal>
-                    ):null
+                {showLoginModal ? (
+                    <LoginModal title="登录"></LoginModal>
+                ) : null
                 }
                 {telemetryModalVisible ? (
                     <TelemetryModal

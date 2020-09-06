@@ -13,7 +13,7 @@ const MODAL_SOUND_RECORDER = 'soundRecorder';
 const MODAL_CONNECTION = 'connectionModal';
 const MODAL_TIPS_LIBRARY = 'tipsLibrary';
 
-const MODAL_LOGIN= 'loginModal';
+const MODAL_LOGIN = 'loginModal';
 
 const initialState = {
     [MODAL_BACKDROP_LIBRARY]: false,
