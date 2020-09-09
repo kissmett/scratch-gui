@@ -103,11 +103,11 @@ class GUI extends React.Component {
                     let blobs = request.response
                     reader.readAsArrayBuffer(blobs);
                     reader.onload = () => _this.props.vm.loadProject(reader.result).then(() => {
-                        analytics.event({
-                            category: 'project',
-                            action: 'Import Project File',
-                            nonInteraction: true
-                        });
+                        // analytics.event({
+                        //     category: 'project',
+                        //     action: 'Import Project File',
+                        //     nonInteraction: true
+                        // });
                         _this.props.onLoadingFinished(_this.props.loadingState);
                     }).catch(error => {
                         console.warn(error);

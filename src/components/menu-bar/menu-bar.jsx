@@ -75,6 +75,7 @@ import aboutIcon from './icon--about.svg';
 import scratchLogo from './scratch-logo.svg';
 
 import sharedMessages from '../../lib/shared-messages';
+import SB3CloudSaver from "../../containers/sb3-cloudsaver.jsx";
 
 const ariaMessages = defineMessages({
     language: {
@@ -437,6 +438,22 @@ class MenuBar extends React.Component {
                                                 />
                                             </MenuItem>
                                         )}</SB3Downloader>
+
+                                        <SB3CloudSaver>{(className, downloadProjectCallback) => (
+                                            <MenuItem
+                                                className={className}
+                                                onClick={this.getSaveToComputerHandler(downloadProjectCallback)}
+                                            >
+                                                {/*<FormattedMessage*/}
+                                                {/*    defaultMessage="Save to Cloud"*/}
+                                                {/*    description="Menu bar item for saving a project to momoji cloud" // eslint-disable-line max-len*/}
+                                                {/*    id="gui.menuBar.saveToCloud"*/}
+                                                {/*/>*/}
+                                                保存到云端
+                                            </MenuItem>
+                                        )}</SB3CloudSaver>
+
+
                                     </MenuSection>
                                 </MenuBarMenu>
                             </div>
